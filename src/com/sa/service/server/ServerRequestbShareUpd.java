@@ -67,20 +67,22 @@ public class ServerRequestbShareUpd extends Packet {
 						String shareK1 = (String) this.getOption(1);
 						if (null != shareK1 && !"".equals(shareK1)) {
 							synchronized (shareK1) {
-								this.setRoomId(rId);
-								setShare();
+								//this.setRoomId(rId);
+								setShare(rId);
 							}
 						}
 
 						/** 实例化 变更共享 下行 并 赋值 并 执行 */
-						new ClientResponebShareUpd(this.getPacketHead(), this.getOptions()).execPacket();
+						ClientResponebShareUpd clientResponebShareUpd = new ClientResponebShareUpd(this.getPacketHead(), this.getOptions());
+						clientResponebShareUpd.setRoomId(rId);
+						clientResponebShareUpd.execPacket();
 					}
 				}
 			}
 		}
 	}
 
-	private int setShare() {
+	private int setShare(String roomId) {
 		String shareK = (String) this.getOption(1);
 		String shareV = (String) this.getOption(2);
 		String shareType = (String) this.getOption(3);
@@ -92,24 +94,24 @@ public class ServerRequestbShareUpd extends Packet {
 		
 		int rs = 0;
 		if ("del".equalsIgnoreCase(shareOptType)) {
-			ServerDataPool.serverDataManager.removeShare(this.getRoomId(), shareK);
+			ServerDataPool.serverDataManager.removeShare(roomId, shareK);
 		} else if ("remove.1".equalsIgnoreCase(shareOptType)) {
-			rs = ServerDataPool.serverDataManager.removeShare(this.getRoomId(), shareK, shareV);
+			rs = ServerDataPool.serverDataManager.removeShare(roomId, shareK, shareV);
 		} else if ("remove.n.len".equalsIgnoreCase(shareOptType)) {
-			rs = ServerDataPool.serverDataManager.removeShare(this.getRoomId(), shareK, Integer.parseInt(index),
+			rs = ServerDataPool.serverDataManager.removeShare(roomId, shareK, Integer.parseInt(index),
 					Integer.parseInt(len));
 		} else if ("remove.n.index".equalsIgnoreCase(shareOptType)) {
 			String[] arr = indexs.split(",");
-			ServerDataPool.serverDataManager.removeShare(this.getRoomId(), shareK, arr);
+			ServerDataPool.serverDataManager.removeShare(roomId, shareK, arr);
 		} else if ("upd".equalsIgnoreCase(shareOptType)) {
 			/** 设置房间共享文件 */
-			ServerDataPool.serverDataManager.setShare(this.getRoomId(), shareK, shareV, shareType);
+			ServerDataPool.serverDataManager.setShare(roomId, shareK, shareV, shareType);
 		} else if ("upd.index".equalsIgnoreCase(shareOptType)) {
 			/** 更新房间共享文件 */
-			ServerDataPool.serverDataManager.updateShare(this.getRoomId(), shareK, shareV,Integer.parseInt(index));
+			ServerDataPool.serverDataManager.updateShare(roomId, shareK, shareV,Integer.parseInt(index));
 		} else if ("upd.value".equalsIgnoreCase(shareOptType)) {
 			/** 更新房间共享文件 */
-			ServerDataPool.serverDataManager.updateShare(this.getRoomId(), shareK, oldShareV,shareV);
+			ServerDataPool.serverDataManager.updateShare(roomId, shareK, oldShareV,shareV);
 		}
 
 		return rs;

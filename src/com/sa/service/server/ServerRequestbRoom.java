@@ -65,6 +65,7 @@ public class ServerRequestbRoom extends Packet {
 			}
 			if (null != roomIds && roomIds.length > 0) {
 				for (String rId : roomIds) {
+					//这里不直接修改roomId而新建实体 因为要保证发出的下行消息间不受影响 避免上一个还未真正发出去就被更改
 					ClientResponebRoom newCrr = new ClientResponebRoom(this.getPacketHead(), this.getOptions());
 					try {
 						BeanUtils.copyProperties(crr, newCrr);

@@ -33,11 +33,13 @@ public class ServerRequestcShareRemove extends Packet {
 				String[] roomIds = this.getRoomId().split(",");
 				if (null != roomIds && roomIds.length > 0) {
 					for (String rId : roomIds) {
-						this.setRoomId(rId);
+						//this.setRoomId(rId);
 						/** 实例化共享删除 下行 并赋值 并 执行 */
-						new ClientResponecShareRemove(this.getPacketHead(), this.getOptions()).execPacket();
+						ClientResponecShareRemove clientResponecShareRemove = new ClientResponecShareRemove(this.getPacketHead(), this.getOptions());
+						clientResponecShareRemove.setRoomId(rId);
+						clientResponecShareRemove.execPacket();
 						/** 删除共享 */
-						ServerDataPool.serverDataManager.removeShare(this.getRoomId(), op1);
+						ServerDataPool.serverDataManager.removeShare(rId, op1);
 					}
 				}
 
